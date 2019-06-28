@@ -1,0 +1,668 @@
+<html>
+
+<?php
+	session_start();
+	require 'conexion.php';
+	if(!isset($_SESSION["id_usuario"]))
+	{
+		header("location:login.php");
+	}
+	$bandera=false;
+ 
+ 
+if(!empty($_POST))
+	{
+		if((!empty($_POST['codigo']))&& (!empty($_POST['nombres']))&& (!empty($_POST['apellidos'])) && (!empty($_POST['selectasignatura'])) && (!empty($_POST['selectcarrera'])) &&  (!empty($_POST['electronicos'])))
+		{
+$codigo=mysqli_real_escape_string($mysqli,$_POST['codigo']);
+$nombres=mysqli_real_escape_string($mysqli,$_POST['nombres']);
+$apellidos=mysqli_real_escape_string($mysqli,$_POST['apellidos']);
+$asignatura=$_POST['selectasignatura'];
+$carrera=$_POST['selectcarrera'];
+$electronico=mysqli_real_escape_string($mysqli,$_POST['electronicos']);
+
+
+
+$sqluser="SELECT codigo FROM estudiante WHERE codigo='$codigo'";
+$resuser=$mysqli->query($sqluser);	
+$row=$resuser->num_rows;
+if($row>0)
+{
+	$error="<script type='text/javascript'> alert('EL USUARIO YA EXISTE!!!!')</script>";
+	
+}
+else
+{
+	$sqlestu="INSERT INTO estudiante (codigo,nombre,apellidos,cod_carrera,cod_asignatura,cod_electronico)
+	VALUES('$codigo','$nombres','$apellidos','$carrera','$asignatura','$electronico')";
+
+	$resulestu=$mysqli->query($sqlestu);
+
+	$sqlestu="INSERT INTO control2(cod_asignatura,codigo)
+	VALUES('$asignatura','$codigo')";
+
+	$resulestu=$mysqli->query($sqlestu);
+	
+	if($resulestu>0)
+	{
+		$bandera=true;
+
+	}else
+	{
+		$error="<script type='text/javascript'> alert('ERROR AL REGISTRAR')</script>";
+		
+	}
+	
+
+}
+} else if (!empty($_POST['codigoborrar']))
+	{
+		$codigo=mysqli_real_escape_string($mysqli,$_POST['codigoborrar']);
+
+		$sqluser="SELECT codigo FROM estudiante WHERE codigo='$codigo'";
+		$resuser=$mysqli->query($sqluser);	
+$row=$resuser->num_rows;
+	
+	if($row>0)
+{
+		$sqlborr="DELETE FROM `registro`.`estudiante` WHERE `estudiante`.`codigo` = '$codigo'";
+		$resborr=$mysqli->query($sqlborr);
+		
+		
+		
+		if($resborr>0)
+	{
+		$bandera=true;
+
+	}else
+	{
+		$error="ERRO AL BORRAR";
+	}	
+
+}
+else 
+{
+	$error="EL USUARIO NO EXISTE!!!!";
+}
+
+
+
+	}else if (!empty($_POST['codigobuscar']))
+	
+	{
+		$codigo=mysqli_real_escape_string($mysqli,$_POST['codigobuscar']);	
+	}
+
+	else if (!empty($_POST['codigomodificar']))
+
+	{
+$codigo=mysqli_real_escape_string($mysqli,$_POST['codigomodificar']);
+		$sqluser="SELECT codigo FROM estudiante WHERE codigo='$codigo'";
+$resuser=$mysqli->query($sqluser);	
+$row=$resuser->num_rows;
+if($row>0)
+{
+	
+	$nombres=mysqli_real_escape_string($mysqli,$_POST['nombresmodificar']);	
+	$apellidos=mysqli_real_escape_string($mysqli,$_POST['apellidosmodificar']);	
+	$asignatura=mysqli_real_escape_string($mysqli,$_POST['selectasignaturamodificar']);	
+	$carrera=mysqli_real_escape_string($mysqli,$_POST['selectcarreramodificar']);	
+
+	$sqlborr="UPDATE `registro`.`estudiante` SET nombre='$nombres' ,apellidos='$apellidos' ,  cod_carrera='$carrera'  , cod_asignatura='$asignatura'WHERE codigo='$codigo'" ;
+		$resborr=$mysqli->query($sqlborr);
+		
+
+
+
+			if($resborr>0)
+	{
+		$bandera=true;
+
+	}else
+	{
+		$error="ERROR AL MODIFICAR";
+	}	
+}else 
+
+{
+	$error="EL USUARIO NO EXISTE";
+}
+	}else if ((!empty($_POST['asig']))&& (!empty($_POST['asigcod'])))
+	{
+	
+	$asig=mysqli_real_escape_string($mysqli,$_POST['asig']);
+	$asigcod=mysqli_real_escape_string($mysqli,$_POST['asigcod']);	
+$sqlasiga="SELECT cod_asignatura FROM asignatura WHERE cod_asignatura='$asigcod'";
+$resuasiga=$mysqli->query($sqlasiga);
+$rowa=$resuasiga->num_rows;
+
+if($rowa>0)
+{
+$error="<script type='text/javascript'> alert('Ya existe una asignatura con el mismo codigo')</script>";	
+}
+
+else
+{	
+
+
+	
+
+		$sqlasig="INSERT INTO asignatura (cod_asignatura,nombre_asignatura)
+		VALUES ('$asigcod','$asig')";
+$resuasig=$mysqli->query($sqlasig);	
+$error="<script type='text/javascript'> alert('La asignatura se ingreso con exito')</script>";
+	}
+
+}
+	
+}
+
+
+
+?>
+
+<head>
+
+<title>Inicio</title>
+<?php
+
+$slk="SELECT * FROM estudiante";
+$resu=$mysqli->query($slk);	
+
+echo "<table WIDTH='900' border ='2'style='Position:Absolute; left:20%; top:150%' background='r.png'>";  
+echo "<tr>";  
+echo "<th>CODIGO</th>";  
+echo "<th>NOMBRE</th>";  
+echo "<th>APELLIDOS</th>";
+echo "<th>CODIGO DE LA CARRERA</th>";
+echo "<th>CODIGO DE ASIGNATURA</th>"; 
+echo "<th>CORREO</th>"; 
+echo "<th>ASISTENCIA</th>";  
+echo "</tr>"; 
+
+ while ($fila=mysqli_fetch_array($resu))
+ {
+
+ echo "<tr>";  
+    echo "<td  >$fila[codigo]     </td>";  
+    echo "<td>$fila[nombre]       </td>";  
+    echo "<td>$fila[apellidos]    </td>";
+    echo "<td>$fila[cod_carrera]  </td>";
+    echo "<td>$fila[cod_asignatura]    </td>"; 
+    echo "<td>$fila[cod_electronico] </td>"; 
+    echo "<td> <center><input type='checkbox'></center></td>"; 
+
+    echo "</tr>";  
+} 
+echo "</table>"; 
+	  ?>
+<script>
+	
+	
+		function agregar();
+
+		{
+			document.registro.submit();
+		
+	}
+</script>
+
+<style type="text/css">
+ 
+* {
+				margin:0px;
+				padding:0px;
+			}
+			#header
+			{
+				margin:auto;
+				width:50px;
+				font-family:Arial,Helvetica,sans-serif;	
+			}
+			
+			ul,ol
+			{
+				list-style:none;
+			}
+.nav li a
+{
+	background-color:#000;
+	color:#fff;
+	text-decoration:none;
+}
+</style>
+</head>
+
+<nav>
+
+ <ul >
+ 			<li><a   name="agregar"   onClick="agregar1();">Agragar estudiante </a></li>
+
+ 		<li><a   name="modificar"   onClick="agregar3();">Modificar estudiante</a></li>
+ 		<li><a     name="agreagarasig"   onClick="agregar6();">Agregar profesor</a></li>
+
+ 		<li><a    name="agreagarasig"   onClick="agregar5();">agregar asignatura</a></li>
+ 		<li> <a   name="borrar"   onClick="agregar2();">Borrar estudiante</a></li>
+</ul>
+</nav>
+
+
+<script type="text/javascript">
+function agregar1(){
+	if(  document.getElementById('agregar2').style.display == 'none' && document.getElementById('agregar3').style.display == 'none'&& document.getElementById('agregar4').style.display == 'none' && document.getElementById('agregar5').style.display == 'none' && document.getElementById('agregar6').style.display == 'none')
+	{
+document.getElementById('agregar1').style.display = 'block';
+}
+}
+
+function ocultar1(){
+document.getElementById('agregar1').style.display = 'none';
+
+}
+
+function agregar2(){
+
+if( document.getElementById('agregar1').style.display == 'none' && document.getElementById('agregar3').style.display == 'none'&& document.getElementById('agregar4').style.display == 'none' && document.getElementById('agregar5').style.display == 'none' && document.getElementById('agregar6').style.display == 'none')
+{
+document.getElementById('agregar2').style.display = 'block';
+}
+}
+
+function ocultar2(){
+
+document.getElementById('agregar2').style.display = 'none';
+
+
+}
+function agregar3(){
+if( document.getElementById('agregar1').style.display == 'none'&& document.getElementById('agregar2').style.display == 'none' && document.getElementById('agregar4').style.display == 'none' && document.getElementById('agregar5').style.display == 'none' && document.getElementById('agregar6').style.display == 'none')
+{
+document.getElementById('agregar3').style.display = 'block';
+}
+}
+
+function ocultar3(){
+
+document.getElementById('agregar3').style.display = 'none';
+
+
+}
+function agregar4(){
+if( document.getElementById('agregar1').style.display == 'none'&& document.getElementById('agregar2').style.display == 'none' && document.getElementById('agregar3').style.display == 'none'&& document.getElementById('agregar5').style.display == 'none'&& document.getElementById('agregar6').style.display == 'none')
+{
+document.getElementById('agregar4').style.display = 'block';
+}
+}
+
+function ocultar4(){
+
+document.getElementById('agregar4').style.display = 'none';
+
+
+}
+function agregar5(){
+if( document.getElementById('agregar1').style.display == 'none'&& document.getElementById('agregar2').style.display == 'none' && document.getElementById('agregar3').style.display == 'none'&& document.getElementById('agregar4').style.display == 'none'&& document.getElementById('agregar6').style.display == 'none')
+{
+document.getElementById('agregar5').style.display = 'block';
+}
+}
+
+function ocultar5(){
+
+document.getElementById('agregar5').style.display = 'none';
+
+
+}
+
+function agregar6(){
+if( document.getElementById('agregar1').style.display == 'none'&& document.getElementById('agregar2').style.display == 'none' && document.getElementById('agregar3').style.display == 'none'&& document.getElementById('agregar4').style.display == 'none'&& document.getElementById('agregar5').style.display == 'none' )
+{
+document.getElementById('agregar6').style.display = 'block';
+}
+}
+
+function ocultar6(){
+
+document.getElementById('agregar6').style.display = 'none';
+
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ function registros()
+ {
+ 	document.registro.submit();
+ 	
+}
+ function borrar()
+ {
+ 	document.borron.submit();
+ 	
+}
+
+function modificar()
+ {
+ 	document.modifi.submit();
+ 	
+}
+function buscar()
+ {
+ 	document.busc.submit();
+ 	
+}
+
+function nevasig()
+ {
+ 	document.asignaturas.submit();
+ 	
+}
+
+function profe()
+ {
+ 	document.profesor.submit();
+ 	
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</script> 
+
+
+
+
+
+
+<body >
+
+
+<div id="header">
+<ul class="nav">
+ 	  
+ 	 
+
+
+ 	  <div id='agregar1' style='display:none;'>
+ 	  <center>
+
+
+
+
+<form action="<?php $_SERVER['PHP_SELF'];?>" method="POST" id="registro" name="registro">	
+<input id="codigo" name="codigo" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required />
+
+<p1  style="position:absolute;top:200px;left:420px;">CODIGO</p1>
+
+<input id="nombres"type="text"  name="nombres" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:250px;left:550px;" required />
+
+<p1  style="position:absolute;top:250px;left:420px;">NOMBRES</p1>
+
+<input id="apellidos" type="text"  name="apellidos" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:300px;left:550px;" required />
+
+<p1  style="position:absolute;top:300px;left:420px;">APELLIDOS</p1>
+
+
+
+
+<input id="electronico" type="text"  name="electronicos" style="width:430px;height:22px; font-family:Verdana;position:absolute;top:550px;left:620px;" required />
+<p1  style="position:absolute;top:550px;left:420px;">CORREO ELECTRONICO</p1>
+
+
+
+
+</select>
+<p1  style="position:absolute;top:600px;left:420px;">GENERO</p1>
+
+
+
+
+
+ <select id="selectasignatura"name="selectasignatura"style="width:500px;height:22px; font-family:Verdana;position:absolute;top:350px;left:550px;">
+<?php
+	$sql="SELECT * FROM asignatura";
+	$resu=$mysqli->query($sql);
+	
+	while($row=mysqli_fetch_array($resu))
+
+	{
+		echo'<option value ="'.$row["cod_asignatura"].'">';
+		echo$row['nombre_asignatura'];
+		echo"</option>";
+	}
+
+		
+?>
+ </select>
+
+<p1  style="position:absolute;top:350px;left:420px;">ASIGNATURA</p1>
+
+<select id="selectcarrera" name="selectcarrera"style="width:500px;height:22px; font-family:Verdana;position:absolute;top:400px;left:550px">
+<?php
+
+	$sql="SELECT * FROM carrera";
+	$resu=$mysqli->query($sql);
+	
+	while($row=mysqli_fetch_array($resu))
+
+	{
+		echo'<option value ="'.$row["cod_carrera"].'">';
+		echo$row['nombre'];
+		echo"</option>";
+	}
+
+		
+?>
+ </select>
+
+<p1  style="position:absolute;top:400px;left:420px;">CARRERA</p1>
+
+<li> <input  style="Position:Absolute; left:50%; top:120%" type="button" value="REGISTRAR" class="boton azul" onClick="registros();" /></li>
+ 
+ </form>
+
+
+<input style="Position:Absolute; left:60%; top:120%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar1();"></li>
+
+</center>
+
+ 	  </div>
+	  
+
+	 
+
+	  <div id='agregar2' style='display:none;'>
+	  <form action="<?php $_SERVER['PHP_SELF'];?>" method="POST" id="borron" name="borron">
+	  <li> <input  style="Position:Absolute; left:35%; top:70%" type="button" value="BORRAR" class="boton azul" onClick="borrar();" /></li>
+	  <input id="codigoborrar" name="codigoborrar" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required/>
+
+<p1  style="position:absolute;top:200px;left:420px;">CODIGO</p1>
+	  <input style="Position:Absolute; left:60%; top:70%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar2();"></li>
+	    </form>
+	    </div>	
+	  
+
+	  
+	  
+  <div id='agregar3' style='display:none;'>
+
+
+
+
+
+
+  <form action="<?php $_SERVER['PHP_SELF'];?>" method="POST" id="modifi" name="modifi">	
+<input id="codigomodificar" type="text" name="codigomodificar" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required />
+
+<p1  style="position:absolute;top:200px;left:420px;">CODIGO</p1>
+
+<input id="nombresmodificar" type="text"  name="nombresmodificar" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:250px;left:550px;" required />
+
+<p1  style="position:absolute;top:250px;left:420px;">NOMBRES</p1>
+
+<input id="apellidosmodificar" type="text"  name="apellidosmodificar" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:300px;left:550px;" required />
+
+<p1  style="position:absolute;top:300px;left:420px;">APELLIDOS</p1>
+
+ <select id="selectasignaturamodificar"name="selectasignaturamodificar"style="width:500px;height:22px; font-family:Verdana;position:absolute;top:350px;left:550px;">
+<?php
+	$sql="SELECT * FROM asignatura";
+	$resu=$mysqli->query($sql);
+	
+	while($row=mysqli_fetch_array($resu))
+
+	{
+		echo'<option value ="'.$row["cod_asignatura"].'">';
+		echo$row['nombre de la asignatura'];
+		echo"</option>";
+
+
+	}
+
+		
+?>
+ </select>
+
+<p1  style="position:absolute;top:350px;left:420px;">ASIGNATURA</p1>
+
+<select id="selectcarreramodificar" name="selectcarreramodificar"style="width:500px;height:22px; font-family:Verdana;position:absolute;top:400px;left:550px">
+<?php
+
+	$sql="SELECT * FROM carrera";
+	$resu=$mysqli->query($sql);
+	
+	while($row=mysqli_fetch_array($resu))
+
+	{
+		echo'<option value ="'.$row["cod_carrera"].'">';
+		echo$row['nombre'];
+		echo"</option>";
+	}
+
+		
+?>
+ </select>
+
+<p1  style="position:absolute;top:400px;left:420px;">CARRERA</p1>
+
+<li> <input  style="Position:Absolute; left:50%; top:70%" type="button" value="MODIFICAR" class="boton azul" onClick="modificar();" /></li>
+ 
+ </form>
+
+
+
+
+
+
+
+
+
+
+
+<p1  style="position:absolute;top:200px;left:420px;">CODIGO</p1>
+  <input style="Position:Absolute; left:60%; top:70%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar3();"></li>
+	    </div>
+
+	  
+	    <div id='agregar4' style='display:none;'>
+	    <input id="codigobuacar" name="codigo" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required/>
+ 
+<p1  style="position:absolute;top:200px;left:420px;">CODIGO</p1>
+	    <input style="Position:Absolute; left:60%; top:70%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar4();"></li>
+	    </div>
+	    <a style="Position:Absolute; left:70%; top:120%" class="boton azul" name="atras" type="button"  href="exel.php" >Cargar</a>
+
+
+
+
+
+
+	    <div id='agregar5' style='display:none;'>
+	    <form action="<?php $_SERVER['PHP_SELF'];?>" method="POST" id="asignaturas" name="asignaturas">
+	    <input id="asig" name="asig" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:250px;left:550px;"required/>
+	    <input id="asigcod" name="asigcod" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required/>
+ 
+
+<p1  style="position:absolute;top:200px;left:300px;">CODIGO DE LA ASIGNATURA</p1>
+<p1  style="position:absolute;top:250px;left:300px;">NOMBRE DE LA ASIGNATURA</p1>
+<li> <input  style="Position:Absolute; left:35%; top:70%" type="button" value="AGREGAR" class="boton azul" onClick="nevasig();" /></li>
+
+	    <input style="Position:Absolute; left:60%; top:70%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar5();"></li>
+	    </form> 
+	    </div>
+
+
+
+
+
+
+
+
+
+	    <div id='agregar6' style='display:none;'>
+	    <form action="<?php $_SERVER['PHP_SELF'];?>" method="POST" id="profesor" name="profesor">
+
+	    <input id="asig" name="asig" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:250px;left:550px;"required/>
+	    <input id="asigcod" name="asigcod" style="width:500px;height:22px; font-family:Verdana;position:absolute;top:200px;left:550px;"required/>
+
+<p1  style="position:absolute;top:200px;left:300px;">CODIGO DE LA ASIGNATURA</p1>
+<p1  style="position:absolute;top:250px;left:300px;">NOMBRE DE LA ASIGNATURA</p1>
+
+
+
+
+<li> <input  style="Position:Absolute; left:35%; top:70%" type="button" value="AGREGAR" class="boton azul" onClick="profe();" /></li>
+
+	    <input style="Position:Absolute; left:60%; top:70%" class="boton azul" name="atras" type="button" value="Atras" onClick="ocultar6();"></li>
+	    </form> 
+	    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+ <?php if ($bandera) {?>
+<h1><script> alert('USTED A ECHO LA OPERACION EXITOSAMENTE')</script></h1>
+
+ <?php }else{ ?>
+ <br/>
+ 	<div style="font-size:16px; color:oo0000;"> <?php echo isset($error) ? utf8_decode($error):'';?></div>
+ 	<?php }?>
+<a style="Position:Absolute; left:80%; top:120%" class="boton azul" name="cerrar" type="button"href="login.php">Cerrar Sesion</a> 
+</html>

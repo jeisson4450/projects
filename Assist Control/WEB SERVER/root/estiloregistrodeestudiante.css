@@ -1,0 +1,58 @@
+body{
+	background: url(uno.jpg);
+	background-repeat: no-repeat;
+	background-size: 100% 1000px;
+}
+
+.container{
+
+	width: 500px;
+	height: 470px;
+	text-align: center;
+	background-color: rgba(52,73,94,0.7);
+	border-radius: 1000px
+	margin: 0 auto;
+	margin-top: 200px;
+}
+
+
+
+.botonazul
+{
+
+	text-align: 10px 500px;
+	padding: 10px 30px;
+	cursor: pointer;
+	border-radius: 10px;
+	border: none;
+	color: #fff;
+	background-color: #003966;
+	margin-bottom: 200px;
+	
+}
+
+.botonazul2
+{
+
+	text-align: 10px 500px;
+	padding: 10px 30px;
+	cursor: pointer;
+	border-radius: 30px;
+	border: none;
+	color: #fff;
+	background-color: #003966;
+	margin-bottom: 200px;
+}
+
+.codigo
+{
+	text-align: center;
+		text-align: center;
+	padding: 10px 70px;
+	cursor: pointer;
+	border-radius: 10px;
+	border: none;
+	color: #fff;
+	background-color: #003966;
+	margin-bottom: 200px;
+}

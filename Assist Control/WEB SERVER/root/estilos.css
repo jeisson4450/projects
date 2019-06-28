@@ -1,0 +1,56 @@
+* {
+	margin:0;
+	padding: 0;
+	}
+
+body {
+	
+}
+
+
+.wrap {
+
+	
+	/*margin:auto;*/
+}
+
+.widget {
+
+	/*margin:32px; */
+}
+
+.widget p {
+	display: inline-block;
+	line-height: 1em;
+}
+
+.fecha {
+	font-family: Oswald, Arial;
+	text-align: center;
+	font-size:1.0em;
+	margin-bottom: 0.3125rem;
+	/*margin-bottom: 5px;*/
+	background: rgba(0,0,0,.5);
+	padding: 20px;
+	width: 100%;
+}
+
+.reloj {
+	font-family: Oswald, Arial;
+	width: 100%;
+	padding: 20px;
+	font-size: 2em;
+	text-align: center;
+	background: rgba(0,0,0,.5);
+}
+
+.reloj .caja-segundos {
+	display: inline-block;
+}
+
+.reloj .segundos,
+.reloj .ampm {
+	font-family: Oswald, Arial;
+	font-size: 1rem;
+	display: block;
+}

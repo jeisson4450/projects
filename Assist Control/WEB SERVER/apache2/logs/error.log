@@ -1,0 +1,6 @@
+[Tue Jun 25 15:01:38.404462 2019] [mpm_winnt:notice] [pid 14096:tid 772] AH00455: Apache/2.4.6 (Win32) PHP/5.4.17 configured -- resuming normal operations
+[Tue Jun 25 15:01:38.404462 2019] [mpm_winnt:notice] [pid 14096:tid 772] AH00456: Apache Lounge VC10 Server built: Jul 16 2013 11:15:41
+[Tue Jun 25 15:01:38.404462 2019] [core:notice] [pid 14096:tid 772] AH00094: Command line: 'C:\\Users\\jeisson\\Desktop\\eee\\WEB SERVER/apache2/bin/httpd_usbwv8.exe -d C:/Users/jeisson/Desktop/eee/WEB SERVER/apache2'
+[Tue Jun 25 15:01:38.409775 2019] [mpm_winnt:notice] [pid 14096:tid 772] AH00418: Parent: Created child process 8796
+[Tue Jun 25 15:01:39.141789 2019] [mpm_winnt:notice] [pid 8796:tid 872] AH00354: Child: Starting 64 worker threads.
+[Tue Jun 25 15:37:43.938975 2019] [:error] [pid 8796:tid 1348] [client ::1:50278] PHP Notice:  Undefined index: codigowe in C:\\Users\\jeisson\\Desktop\\eee\\WEB SERVER\\root\\empleado.php on line 1005, referer: http://localhost:8080/login.php
